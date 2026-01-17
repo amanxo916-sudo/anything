@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QR Scanner</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    header {
+      padding: 15px;
+      background: #111;
+      font-size: 18px;
+    }
+
+    video {
+      width: 100%;
+      height: calc(100vh - 60px);
+      object-fit: cover;
+    }
+
+    .hint {
+      position: fixed;
+      bottom: 20px;
+      width: 100%;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>Scan QR Code</header>
+
+<video id="video" autoplay></video>
+<div class="hint">Point camera at QR code</div>
+
+<script>
+  const video = document.getElementById("video");
+
+  async function startScanner() {
+    if (!("BarcodeDetector" in window)) {
+      alert("QR scanning not supported on this device.");
+      return;
+    }
+
+    const detector = new BarcodeDetector({ formats: ["qr_code"] });
+
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: "environment" }
+    });
+
+    video.srcObject = stream;
+
+    async function scan() {
+      try {
+        const codes = await detector.detect(video);
+        if (codes.length > 0) {
+          const value = codes[0].rawValue;
+
+          stream.getTracks().forEach(track => track.stop());
+          window.location.href = value;
+        }
+      } catch (e) {
+        console.error(e);
+      }
+
+      requestAnimationFrame(scan);
+    }
+
+    scan();
+  }
+
+  startScanner();
+
+  // Register service worker
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+  }
+</script>
+
+</body>
+</html>
