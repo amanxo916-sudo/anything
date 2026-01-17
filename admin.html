@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Admin - Vehicle Update</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body style="font-family: Arial; padding: 20px">
+
+    <h2>Vehicle Admin</h2>
+
+    <label>Chassis Number</label><br>
+    <input id="chassis" placeholder="005956"><br><br>
+
+    <label>Model</label><br>
+    <input id="model"><br><br>
+
+    <label>Start Date</label><br>
+    <input id="start"><br><br>
+
+    <label>Estimated Completion</label><br>
+    <input id="estimated"><br><br>
+
+    <label>Status</label><br>
+    <input id="status"><br><br>
+
+    <button onclick="saveVehicle()">Save / Update</button>
+
+    <p id="msg"></p>
+
+    <script>
+        function saveVehicle() {
+            const chassis = document.getElementById("chassis").value;
+            const model = document.getElementById("model").value;
+            const start = document.getElementById("start").value;
+            const estimated = document.getElementById("estimated").value;
+            const status = document.getElementById("status").value;
+
+            let vehicles = JSON.parse(localStorage.getItem("vehicles")) || {};
+
+            vehicles[chassis] = { model, start, estimated, status };
+
+            localStorage.setItem("vehicles", JSON.stringify(vehicles));
+
+            document.getElementById("msg").innerText = "Saved ✔";
+        }
+    </script>
+
+</body>
+
+</html>
