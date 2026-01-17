@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Vehicle Production Tracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f2f2f2;
+        }
+
+        header {
+            background: #111;
+            color: #fff;
+            padding: 16px;
+            text-align: center;
+            font-size: 18px;
+            position: sticky;
+            top: 0;
+        }
+
+        .container {
+            padding: 16px;
+        }
+
+        .card {
+            background: #fff;
+            padding: 16px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        }
+
+        .row {
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .label {
+            font-weight: bold;
+            color: #444;
+        }
+
+        .status {
+            padding: 6px 10px;
+            display: inline-block;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .in-progress {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            background: #111;
+            color: #fff;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+        }
+
+        button:active {
+            opacity: 0.8;
+        }
+
+        .center {
+            text-align: center;
+            color: #555;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        Vehicle Details
+    </header>
+
+    <div class="container">
+        <div id="app"></div>
+    </div>
+
+    <script>
+        /* VEHICLE DATA */
+        const vehicles = {
+            "005956": {
+                model: "Foton Aumark SE85 Cargo",
+                startDate: "03/01/2018",
+                estimatedDate: "13/01/2018",
+                location: "Kality Gebriel",
+                status: "In Progress"
+            },
+            "070714": {
+                model: "Foton ESTM 240 FSR Bajaj",
+                startDate: "20/01/2018",
+                estimatedDate: "05/02/2018",
+                location: "Kality Gebriel",
+                status: "Completed"
+            },
+            "226546": {
+                model: "TM Double Cab Van",
+                startDate: "13/03/2018",
+                estimatedDate: "23/03/2018",
+                location: "Kality Gebriel",
+                status: "In Progress"
+            }
+        };
+
+        const app = document.getElementById("app");
+        const params = new URLSearchParams(window.location.search);
+        const chassis = params.get("chassis");
+
+        function renderHome() {
+            app.innerHTML = `
+      <div class="card center">
+        <p>Scan a vehicle QR code to view details.</p>
+        <p><strong>Example:</strong><br>?chassis=005956</p>
+      </div>
+    `;
+        }
+
+        function renderVehicle(chassisNo) {
+            const v = vehicles[chassisNo];
+
+            if (!v) {
+                app.innerHTML = `
+        <div class="card center">
+          <p>Vehicle not found.</p>
+          <button onclick="exitApp()">Exit</button>
+        </div>
+      `;
+                return;
+            }
+
+            const statusClass = v.status === "Completed" ? "completed" : "in-progress";
+
+            app.innerHTML = `
+      <div class="card">
+        <div class="row"><span class="label">Chassis No:</span> ${chassisNo}</div>
+        <div class="row"><span class="label">Model:</span> ${v.model}</div>
+        <div class="row"><span class="label">Start Date:</span> ${v.startDate}</div>
+        <div class="row"><span class="label">Estimated Completion:</span> ${v.estimatedDate}</div>
+        <div class="row"><span class="label">Location:</span> ${v.location}</div>
+        <div class="row">
+          <span class="label">Status:</span>
+          <span class="status ${statusClass}">${v.status}</span>
+        </div>
+
+        <button onclick="exitApp()">Exit</button>
+      </div>
+    `;
+        }
+
+        function exitApp() {
+            window.location.href = window.location.pathname;
+        }
+
+        if (chassis) {
+            renderVehicle(chassis);
+        } else {
+            renderHome();
+        }
+    </script>
+
+</body>
+
+</html>
